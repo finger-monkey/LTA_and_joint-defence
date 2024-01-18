@@ -1,4 +1,4 @@
-This repository contains the reference source code for the paper Robust Person Re-identification with Structural Invariance Defence(PaperID:2553).
+This repository contains the reference source code for the CVPR 2022 paper titled 'Robust Person Re-identification with Structural Invariance Defence'.
 
 Prerequisites
 ·Python 3.6

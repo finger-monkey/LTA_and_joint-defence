@@ -1,7 +1,5 @@
 This repository contains the reference source code for the CVPR2022 paper titled 'Person Re-identification Method Based on Color Attack and Joint Defence'.
 
-![Results](framework2.jpg)
-
 
 Prerequisites
 ·Python 3.6

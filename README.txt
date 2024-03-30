@@ -104,3 +104,22 @@ Change the 78th-80th line in test.py to apply the code:
 This is our passive defense Circuitous Scaling. To run 'test.py' and 'evaluate_gpu.py' to test the effect of the JAD defence.
 
 Considering the limitations of DL, it is better to train several DL models, test them separately for attacks and defenses, or use another dataset to test the cross-domain performance of DL models. In cross-domain tests, models that perform better than the normally trained models will have better defensive capabilities.
+
+
+If you encounter any issues with reproducing adversarial defense, please refer to the earlier open-source version of the code: https://github.com/finger-monkey/ReID_Adversarial_Defense/
+
+if you use our code, please  cite the following paper:
+
+```
+@inproceedings{colorAttack2022,
+  title={Person re-identification method based on color attack and joint defence},
+  author={Gong, Yunpeng and Huang, Liqing and Chen, Lifei},
+  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  pages={4313--4322},
+  year={2022}
+}
+```
+
+## Contact Me
+
+Email: fmonkey625@gmail.com

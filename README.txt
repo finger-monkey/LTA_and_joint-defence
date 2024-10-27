@@ -1,5 +1,4 @@
 # Code for the CVPR 2022 paper "Person Re-identification Method Based on Color Attack and Joint Defence".
-# Code for the CVPR 2022 paper "Person Re-identification Method Based on Color Attack and Joint Defence".
 
 Prerequisites
 ·Python 3.6

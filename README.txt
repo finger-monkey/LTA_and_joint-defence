@@ -113,7 +113,200 @@ if you use our code, please  cite the following paper:
 @inproceedings{colorAttack2022,
   title={Person re-identification method based on color attack and joint defence},
   author={Gong, Yunpeng and Huang, Liqing and Chen, Lifei},
+  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},# Person Re-identification Method Based on Color Attack and Joint Defence
+
+> Official PyTorch implementation for the CVPR 2022 paper.  
+> **Title**: Person Re-identification Method Based on Color Attack and Joint Defence  
+> **Authors**: Yunpeng Gong, Liqing Huang, Lifei Chen  
+> **Conference**: CVPR 2022
+
+---
+
+## Prerequisites
+
+- Python 3.6
+- GPU Memory ≥ 6G
+- NumPy
+- PyTorch 0.3+ (http://pytorch.org/)
+- Torchvision (from source)
+
+You can install all dependencies via:
+
+```bash
+pip install -r requirements.txt
+```
+
+or create a new Conda environment:
+
+```bash
+conda env create -f environment.yml
+```
+
+### Datasets
+
+We use **Market1501** and **DukeMTMC-reid** in our experiments. Please download them beforehand.
+
+---
+
+## Getting Started
+
+### Part 1: Training
+
+#### 1.1 Prepare Data Folder
+
+Run `prepare.py` to reorganise the dataset into a format compatible with `torchvision.datasets.ImageFolder`.
+
+1. Edit the **5th line** of `prepare.py` to set your dataset download path, e.g.:
+   ```python
+   data_path = '/home/Download/Market'   # change to your path
+   ```
+
+2. Run:
+   ```bash
+   python prepare.py
+   ```
+
+This creates a `pytorch/` subfolder under the dataset root with the following structure:
+
+```
+Market/
+├── bounding_box_test/
+├── bounding_box_train/
+├── gt_bbox/
+├── gt_query/
+├── query/
+├── readme.txt
+└── pytorch/
+    ├── train_all/          # training images, each ID in its own subfolder (e.g., 0002, 0007, ...)
+    ├── val/                # validation (if used)
+    ├── query/              # query images
+    └── gallery/            # gallery images
+```
+
+---
+
+#### 1.2 Training
+
+Train a normally trained model (ResNet‑50 by default):
+
+```bash
+python train.py --gpu_ids 0 --name Normally_Trained --data_dir your_data_path --epoch 60
+```
+
+**Arguments**:
+- `--gpu_ids` : GPU device ID(s)
+- `--name`    : name for the saved model
+- `--data_dir`: path to the dataset root (e.g., `/path/to/Market/pytorch`)
+- `--epoch`   : number of training epochs
+
+Optional:
+- `--use_dense` : use DenseNet instead of ResNet‑50
+
+Trained models are saved under `./model/`.
+
+---
+
+##### Train a DL (Defence) Model
+
+Edit line 65 in `train.py` to enable the defence module:
+
+```python
+Fuse_LFusePR(G=0.05, G_rgb=0.01, S_rgb=0.01, Aug=0.05, F=0.1)
+```
+
+Then run:
+
+```bash
+python train.py --gpu_ids 0 --name DL --data_dir your_data_path --epoch 120
+```
+
+---
+
+### Part 2: Test
+
+#### 2.1 Extract Features
+
+Load the trained weights and extract visual features for all images:
+
+```bash
+python test.py --gpu_ids 0 --name Normally_Trained --test_dir your_data_path
+```
+
+- `--name` : directory name of the trained model (under `./model/`)
+
+#### 2.2 Evaluate with Re‑ranking
+
+```bash
+python evaluate_gpu.py
+```
+
+> **Note**: This step requires >10GB memory. Run it on a powerful machine if possible.  
+> **Important**: You must run `test.py` **before** running `evaluate_gpu.py`.
+
+---
+
+### Part 3: White‑Box Attack
+
+Generate adversarial examples (on the query set) using our LTA attack:
+
+```bash
+python aa_LTA.py --gpu_ids 0 --name <model_folder_name> --test_dir your_data_path
+```
+
+- `--name` : folder name of the model you want to attack (e.g., `DL`)
+
+The generated adversarial images are saved under `./adv_data/`.  
+To test the attack effect, replace the original query set with these adversarial examples and re‑run `test.py` and `evaluate_gpu.py`.
+
+---
+
+### Part 4: Joint Adversarial Defence (JAD)
+
+First, train a DL model and perform a white‑box attack on it to generate adversarial examples.
+
+Then, edit lines 78‑80 in `test.py` to apply our passive defence – **Circuitous Scaling**:
+
+```python
+######## JAD
+transforms.Resize((110,50), interpolation=3),
+transforms.Resize((220,100), interpolation=3),
+transforms.Resize((110,50), interpolation=3),
+```
+
+After enabling this, run `test.py` and `evaluate_gpu.py` to evaluate the defence performance.
+
+---
+
+> **Tip**: For more robust results, train several DL models, test attacks/defences separately, or evaluate cross‑domain performance on other datasets. In cross‑domain settings, DL‑trained models typically outperform normally trained ones in terms of defence.
+
+---
+
+## Troubleshooting & Earlier Code
+
+If you encounter issues with reproducing the adversarial defence, please refer to our earlier open‑source version:  
+👉 [https://github.com/finger-monkey/ReID_Adversarial_Defense/](https://github.com/finger-monkey/ReID_Adversarial_Defense/)
+
+---
+
+## Citation
+
+If you use this code, please cite our paper:
+
+```bibtex
+@inproceedings{colorAttack2022,
+  title={Person re-identification method based on color attack and joint defence},
+  author={Gong, Yunpeng and Huang, Liqing and Chen, Lifei},
   booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  pages={4313--4322},
+  year={2022}
+}
+```
+
+---
+
+## Contact
+
+Email: [fmonkey625@gmail.com](mailto:fmonkey625@gmail.com)
   pages={4313--4322},
   year={2022}
 }
